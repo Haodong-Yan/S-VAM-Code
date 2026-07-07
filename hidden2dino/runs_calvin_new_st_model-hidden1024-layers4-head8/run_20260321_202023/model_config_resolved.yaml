@@ -1,0 +1,18 @@
+model:
+  C_in: 2560
+  C_out: 768
+  H: 16
+  T: 16
+  W: 16
+  dropout: 0.1
+  hidden_dim: 1024
+  num_heads: 8
+  num_layers: 4
+  params_total: 106155264
+  params_trainable: 106155264
+source_config: configs/model_default-hidden1024-layers4-head8.yaml
+split_file: null
+train_ratio: 0.9
+use_base_camera: true
+use_gripper: false
+use_ref_frame: true

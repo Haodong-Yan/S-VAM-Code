@@ -1,0 +1,22 @@
+backbone_ckpt: null
+model:
+  C_in: 2560
+  H: 16
+  T: 16
+  W: 16
+  camera_pool: mean
+  dropout: 0.1
+  hidden_dim: 1024
+  num_heads: 8
+  num_layers: 4
+  num_stages: 1
+  token_dim: 2048
+  use_stage_embed: true
+model_dir: null
+source_config: configs/model_large.yaml
+split_file: null
+target_stage_idx: 0
+train_ratio: 0.9
+use_base_camera: true
+use_gripper: false
+use_ref_frame: true

@@ -1,0 +1,121 @@
+defaults:
+  - datamodule: calvin
+
+root_data_dir: ???  # path to calvin/dataset/task_ABC_D
+lang_folder: lang_clip_resnet50
+clip_lang_model_name: ViT-B/32
+
+log_dir: ./logs/svd_224token_3dresampler_extraview_svd2
+slurm: false
+min_window_size: 21 # 21
+max_window_size: 50
+future_range: 29
+seed: 242
+device: 'cuda'
+batch_size: 48
+devices: 4
+goal_window_size: 1
+multistep: 10 #${act_seq_len}
+p_last_state: 0
+max_epochs: 50
+log_every: 50
+rollout_lh_skip_epochs: 290
+window_sampling_strategy: 'geometric'
+num_workers: 12
+img_gen_frame_diff: 3
+benchmark_name: calvin_abcd # calvin_abcd
+use_ckpt_path : false
+ckpt_path: null  # set when use_ckpt_path is true
+act_seq_len: 10
+obs_seq_len: 1
+
+model:
+  _target_: policy_models.VPP_policy_hidden2dino_dpa_new_real_st.VPP_Policy
+  _recursive_: false
+  latent_dim: 384
+  multistep: 10
+  sampler_type: 'ddim'
+  num_sampling_steps: 10
+  sigma_data: 0.5
+  sigma_min: 0.001
+  sigma_max: 80
+  noise_scheduler: 'exponential'
+  sigma_sample_density_type: 'loglogistic'
+  use_lr_scheduler: true
+  act_window_size: 10
+  obs_seq_len: ${obs_seq_len}
+  action_dim: 7
+  action_seq_len: ${act_seq_len}
+  use_text_not_embedding: True
+  seed: ${seed}
+  Former_depth: 6
+  Former_heads: 8
+  Former_dim_head: 64
+  Former_num_time_embeds: 16
+  num_latents: 224
+  pretrained_model_path: ???  # path to svd-robot-calvin-ft
+  text_encoder_path: ???  # path to clip-vit-base-patch32
+  use_position_encoding: False # # should be same with finetune settings
+  use_gripper_features: True
+  use_Former: 3d
+  timestep: 20
+  use_all_layer: True
+  extract_layer_idx: 1
+  debug_hidden2dino: False
+  debug_hidden2dino_dir: null
+  use_gt_dino_condition: False
+  gt_dino_chunk: 32
+  bypass_video_former: False
+  use_hidden_dino_dpa_concat: False
+  hidden2dpa_use_ref_override: null
+  optimizer:
+    _target_: torch.optim.AdamW
+    transformer_weight_decay: 0.05
+    obs_encoder_weight_decay: 0.05
+    learning_rate: 1e-4
+    betas: [ 0.9, 0.9 ]
+  lr_scheduler:
+    lr_scheduler:
+      init_lr: 3e-4  # This is the peak or maximum learning rate
+      init_lr_scale: 0.1  # This is the ratio of initial learning rate to peak learning rate
+      final_lr_scale: 3e-6  # This is the ratio of final learning rate to peak learning rate
+      total_steps: 60000  # Example total steps, adjust as needed
+      phase_ratio: "(0.02, 0.08, 0.9)"
+      lr: 3e-4
+
+trainer:
+  gpus: ${devices}
+  precision: 16
+  max_epochs: ${max_epochs}
+  sync_batchnorm: false
+  accelerator: auto
+  limit_train_batches: 3000
+  limit_val_batches: 4
+
+logger:
+  _target_: pytorch_lightning.loggers.WandbLogger
+  save_dir: .
+  name: logger
+  group: models
+  log_model: false
+  project: ${benchmark_name} # calvin_vision
+  entity: ???
+  id: ???
+
+
+hydra:
+  run:
+    dir: ${log_dir}/runs/${now:%Y-%m-%d}/${now:%H-%M-%S}
+  sweep:
+    dir: ${log_dir}/runs/${now:%Y-%m-%d}/${now:%H-%M-%S}
+    subdir: ${hydra.job.override_dirname}
+  job:
+    config:
+      override_dirname:
+        exclude_keys:
+          - log_dir
+          - datamodule.root_data_dir
+          - trainer.gpus
+          - datamodule.num_workers
+          - trainer.limit_train_batches
+          - trainer.limit_val_batches

@@ -1,0 +1,57 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Training artifacts
+logs/
+loss/
+wandb/
+swanlog/
+nohup.out
+*.pt
+!requirements.txt
+
+# SLURM logs
+output_*.txt
+error_*.txt
+sbatch_log/
+
+# Debug artifacts
+eval_step80k_rerun.log
+
+# Internal dev docs
+CLAUDE.md
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*.swo
+
+# Data (too large for git)
+calvin/
+clip-vit-base-patch32/
+svd-robot*/
+dp-calvin/
+checkpoints/
+
+# Unrelated directories
+Motus/
+refine-logs/
+
+# Decoupler training run logs (most contain resolved configs with absolute paths)
+hidden2dino/runs_*/
+hidden2dpa/runs_*/
+
+# Whitelist: decoupler config files (weights hosted on ModelScope)
+!hidden2dino/runs_calvin_new_st_model-hidden1024-layers4-head8/
+!hidden2dino/runs_calvin_new_st_model-hidden1024-layers4-head8/run_20260321_202023/
+!hidden2dino/runs_calvin_new_st_model-hidden1024-layers4-head8/run_20260321_202023/*.yaml
+!hidden2dpa/runs_da3_calvin_st_ref_large/
+!hidden2dpa/runs_da3_calvin_st_ref_large/run_20260323_220858/
+!hidden2dpa/runs_da3_calvin_st_ref_large/run_20260323_220858/*.yaml

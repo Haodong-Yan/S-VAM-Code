@@ -1,0 +1,53 @@
+# Core deep learning
+torch>=2.0.1
+torchvision
+pytorch-lightning==1.9.5
+accelerate
+
+# Hugging Face ecosystem
+diffusers==0.28.0
+transformers==4.47.0
+huggingface_hub==0.24.0
+safetensors
+
+# Configuration
+hydra-core==1.1.1
+hydra-colorlog
+omegaconf
+
+# Tensor operations & math
+einops
+einops_exts
+scipy
+numpy>=1.20
+
+# Vision & image processing
+opencv-python
+timm
+Pillow
+matplotlib
+moviepy==1.0.3
+imageio[ffmpeg]
+
+# Diffusion & SDE
+torchsde
+torchdiffeq
+
+# Text processing
+ftfy
+regex
+sentence-transformers
+
+# Robotics environment
+gym
+
+# Experiment tracking (optional)
+wandb
+
+# Utilities
+tqdm
+termcolor
+gitpython
+pydantic
+rotary_embedding_torch
+vit-pytorch==1.4.4
