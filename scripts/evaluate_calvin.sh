@@ -9,6 +9,8 @@
 #   CLIP_MODEL_PATH    - path to clip-vit-base-patch32
 #   HIDDEN2DINO_CKPT   - path to hidden2dino checkpoint
 #   HIDDEN2DPA_CKPT    - path to hidden2dpa checkpoint
+#   DINOV2_PATH        - path to DINOv2 torch hub directory
+#   DA3_PATH           - path to Depth Anything 3 model directory
 
 set -euo pipefail
 
@@ -20,6 +22,8 @@ VIDEO_MODEL_PATH="${VIDEO_MODEL_PATH:?Please set VIDEO_MODEL_PATH to path of svd
 CLIP_MODEL_PATH="${CLIP_MODEL_PATH:?Please set CLIP_MODEL_PATH to path of clip-vit-base-patch32}"
 HIDDEN2DINO_CKPT="${HIDDEN2DINO_CKPT:?Please set HIDDEN2DINO_CKPT to path of hidden2dino checkpoint}"
 HIDDEN2DPA_CKPT="${HIDDEN2DPA_CKPT:?Please set HIDDEN2DPA_CKPT to path of hidden2dpa checkpoint}"
+DINOV2_PATH="${DINOV2_PATH:?Please set DINOV2_PATH to path of DINOv2 torch hub directory}"
+DA3_PATH="${DA3_PATH:?Please set DA3_PATH to path of Depth Anything 3 model directory}"
 
 CALVIN_ENV_PYTHON_ROOT="${SCRIPT_DIR}/calvin/calvin_env"
 if [[ ! -d "${CALVIN_ENV_PYTHON_ROOT}/calvin_env" ]]; then
@@ -36,4 +40,6 @@ python policy_evaluation/calvin_evaluate_our.py \
   --clip_model_path "${CLIP_MODEL_PATH}" \
   --hidden2dino_ckpt "${HIDDEN2DINO_CKPT}" \
   --hidden2dpa_ckpt "${HIDDEN2DPA_CKPT}" \
+  --dinov2_path "${DINOV2_PATH}" \
+  --da3_path "${DA3_PATH}" \
   --force_eval

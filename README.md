@@ -49,19 +49,25 @@ pip install -r requirements.txt
 |-------|--------|------|---------|
 | `svd-robot-calvin-ft` | [HuggingFace](https://huggingface.co/yjguo/svd-robot-calvin-ft) | ~8 GB | Finetuned SVD video model |
 | `clip-vit-base-patch32` | [HuggingFace](https://huggingface.co/openai/clip-vit-base-patch32) | ~600 MB | Text encoder (frozen) |
+| `dinov2` | [GitHub](https://github.com/facebookresearch/dinov2) | ~350 MB | DINOv2 ViT-B/14 backbone (reference-frame semantic features) |
+| `Depth-Anything-3` | [HuggingFace](https://huggingface.co/depth-anything/DA3NESTED-GIANT-LARGE) | ~1.3 GB | Depth Anything v3 backbone (reference-frame geometric features) |
 | `s-vam-weights` | [ModelScope](https://modelscope.cn/models/haodong123/s-vam-weights) | ~6 GB | Decoupler weights + trained action model |
 
 ```bash
-# Download base models from HuggingFace
+# Download base models
 huggingface-cli download yjguo/svd-robot-calvin-ft --local-dir ./svd-robot-calvin-ft
 huggingface-cli download openai/clip-vit-base-patch32 --local-dir ./clip-vit-base-patch32
+huggingface-cli download depth-anything/DA3NESTED-GIANT-LARGE --local-dir ./da3-large
 
-# Download S-VAM weights from ModelScope
+# Download DINOv2 (torch hub format)
+git clone https://github.com/facebookresearch/dinov2.git ./dinov2_hub/facebookresearch_dinov2_main
+
+# Download S-VAM weights (decoupler + action model)
 pip install modelscope
 modelscope download haodong123/s-vam-weights --local_dir ./s-vam-weights
 ```
 
-All checkpoint paths can be specified via command-line arguments (`--hidden2dino_ckpt`, `--hidden2dpa_ckpt`, `--action_model_folder`), so you can place them anywhere.
+All checkpoint paths are specified via command-line arguments, so you can place them anywhere.
 
 ## Reproducing Results on Calvin ABC-D
 
@@ -81,6 +87,8 @@ accelerate launch \
   --text_encoder_path ${TEXT_ENCODER_PATH} \
   --hidden2dino_ckpt ${HIDDEN2DINO_CKPT} \
   --hidden2dpa_ckpt ${HIDDEN2DPA_CKPT} \
+  --dinov2_path ${DINOV2_PATH} \
+  --da3_path ${DA3_PATH} \
   --log_dir ./logs/s_vam_calvin
 ```
 
@@ -98,6 +106,8 @@ python policy_evaluation/calvin_evaluate_our.py \
   --clip_model_path ${CLIP_MODEL_PATH} \
   --hidden2dino_ckpt ${HIDDEN2DINO_CKPT} \
   --hidden2dpa_ckpt ${HIDDEN2DPA_CKPT} \
+  --dinov2_path ${DINOV2_PATH} \
+  --da3_path ${DA3_PATH} \
   --force_eval
 ```
 

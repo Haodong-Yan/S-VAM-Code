@@ -780,6 +780,8 @@ if __name__ == "__main__":
     parser.add_argument("--clip_model_path", type=str, default="")
     parser.add_argument("--hidden2dino_ckpt", type=str, required=True, help="Path to hidden2dino checkpoint.")
     parser.add_argument("--hidden2dpa_ckpt", type=str, required=True, help="Path to hidden2dpa checkpoint.")
+    parser.add_argument("--dinov2_path", type=str, required=True, help="Path to DINOv2 torch hub directory.")
+    parser.add_argument("--da3_path", type=str, required=True, help="Path to Depth Anything 3 model directory.")
     parser.add_argument("--calvin_abc_dir", type=str, default="")
     parser.add_argument(
         "--use_gt_dino_condition",
@@ -875,5 +877,7 @@ if __name__ == "__main__":
         cfg.model.bypass_video_former = True
     cfg.model.hidden2dino_ckpt = args.hidden2dino_ckpt
     cfg.model.hidden2dpa_ckpt = args.hidden2dpa_ckpt
+    cfg.model.dinov2_path = args.dinov2_path
+    cfg.model.da3_path = args.da3_path
     main(cfg)
 

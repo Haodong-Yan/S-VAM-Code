@@ -119,8 +119,12 @@ class VPP_Policy(pl.LightningModule):
             use_hidden_dpa_concat: bool = False,
             hidden2dino_ckpt: str = '',
             hidden2dpa_ckpt: str = '',
+            dinov2_path: str = '',
+            da3_path: str = '',
     ):
         super(VPP_Policy, self).__init__()
+        self.dinov2_path = dinov2_path
+        self.da3_path = da3_path
         self.latent_dim = latent_dim
         self.use_all_layer = use_all_layer
         self.use_position_encoding = use_position_encoding
@@ -729,13 +733,13 @@ class VPP_Policy(pl.LightningModule):
 
     def _init_gt_dino_encoder(self):
         import torch.hub
-        _torch_hub_dir = os.environ.get(
+        dinov2_dir = self.dinov2_path or os.environ.get(
             "S_VAM_TORCH_HUB_DIR",
             str(_PROJECT_ROOT / "checkpoints" / "torch_hub"),
         )
-        torch.hub.set_dir(_torch_hub_dir)
+        torch.hub.set_dir(dinov2_dir)
         encoder = torch.hub.load(
-            os.path.join(_torch_hub_dir, "facebookresearch_dinov2_main"),
+            os.path.join(dinov2_dir, "facebookresearch_dinov2_main"),
             "dinov2_vitb14_reg",
             verbose=True,
             source="local",
@@ -1566,22 +1570,20 @@ class VPP_Policy(pl.LightningModule):
             try:
                 logger.info("Loading DINOv2 ViT-B/14 model for feature extraction...")
                 import torch.hub
-                _torch_hub_dir = os.environ.get(
+                dinov2_dir = self.dinov2_path or os.environ.get(
                     "S_VAM_TORCH_HUB_DIR",
                     str(_PROJECT_ROOT / "checkpoints" / "torch_hub"),
                 )
-                torch.hub.set_dir(_torch_hub_dir)
+                torch.hub.set_dir(dinov2_dir)
                 self._dino_encoder = torch.hub.load(
-                    os.path.join(_torch_hub_dir, "facebookresearch_dinov2_main"),
+                    os.path.join(dinov2_dir, "facebookresearch_dinov2_main"),
                     "dinov2_vitb14_reg",
                     verbose=True,
                     source="local",
                 )
-                # Remove classification head
                 self._dino_encoder.head = torch.nn.Identity()
                 self._dino_encoder = self._dino_encoder.to(self.device)
                 self._dino_encoder.eval()
-                # Freeze parameters
                 for p in self._dino_encoder.parameters():
                     p.requires_grad = False
                 self._dino_encoder_initialized = True
@@ -1612,7 +1614,7 @@ class VPP_Policy(pl.LightningModule):
                 from hidden2dpa.train_new import load_da3_backbone
 
                 logger.info("Loading DA3 backbone for DPA feature extraction...")
-                da3_model_dir = os.environ.get(
+                da3_model_dir = self.da3_path or os.environ.get(
                     "S_VAM_DA3_MODEL_DIR",
                     str(_PROJECT_ROOT / "checkpoints" / "da3-large"),
                 )
