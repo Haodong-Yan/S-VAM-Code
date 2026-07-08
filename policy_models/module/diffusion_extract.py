@@ -19,8 +19,10 @@ class Diffusion_feature_extractor(nn.Module):
     ):
         super().__init__()
         self.pipeline = pipeline if pipeline is not None else StableVideoDiffusionPipeline()
-        self.tokenizer = tokenizer if tokenizer is not None else AutoTokenizer.from_pretrained("openai/clip-vit-base-patch32", use_fast=False)
-        self.text_encoder = text_encoder if text_encoder is not None else CLIPTextModelWithProjection.from_pretrained("openai/clip-vit-base-patch32")
+        if tokenizer is None or text_encoder is None:
+            raise ValueError("tokenizer and text_encoder must be provided.")
+        self.tokenizer = tokenizer
+        self.text_encoder = text_encoder
         self.num_frames = 16
         self.position_encoding = position_encoding
 

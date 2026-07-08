@@ -5,7 +5,6 @@ import time
 from typing import Dict, List, Union
 
 import cv2
-import git
 import hydra
 import numpy as np
 import pytorch_lightning
@@ -43,14 +42,15 @@ def initialize_pretrained_weights(model, cfg):
 
 def get_git_commit_hash(repo_path: Path) -> str:
     try:
-        repo = git.Repo(search_parent_directories=True, path=repo_path.parent)
-    except git.exc.InvalidGitRepositoryError:
-        return "Not a git repository. Are you using pycharm remote interpreter?"
-
-    changed_files = [item.a_path for item in repo.index.diff(None)]
-    if changed_files:
-        print("WARNING uncommitted modified files: {}".format(",".join(changed_files)))
-    return repo.head.object.hexsha
+        import subprocess
+        result = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=repo_path.parent,
+            capture_output=True, text=True, check=True,
+        )
+        return result.stdout.strip()
+    except Exception:
+        return "unknown"
 
 
 def get_checkpoints_for_epochs(experiment_folder: Path, epochs: Union[List, str]) -> List:
@@ -186,10 +186,4 @@ def add_text(img, lang_text):
 
 
 def format_sftp_path(path):
-    """
-    When using network mount from nautilus, format path
-    """
-    if path.as_posix().startswith("sftp"):
-        uid = os.getuid()
-        path = Path(f"/run/user/{uid}/gvfs/sftp:host={path.as_posix()[6:]}")
     return path

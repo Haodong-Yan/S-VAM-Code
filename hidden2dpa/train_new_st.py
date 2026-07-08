@@ -317,11 +317,7 @@ def train_one_epoch(
             else:
                 preds_full = model(hidden_states)  # list of (tokens, cam_token)
             
-            print("debug",targets.mean(), targets.std())
-            print("debug",preds_full.mean(), preds_full.std())
-            #preds_tokens = [p[0] for p in preds_full]
             loss = F.mse_loss(preds_full, targets)
-            print("debug",loss.item())
         scaler.scale(loss).backward()
         scaler.unscale_(optimizer)
         torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
@@ -463,7 +459,6 @@ def main() -> None:
     # Infer shapes from first sample
     example_hidden = train_dataset[0][1]
     C_in, T, H, W = example_hidden.shape
-    print("DEBUG", C_in, T, H, W)
     token_dim = 2048  # DinoV2 vitb with cat_token=True
 
     config_path = args.config or DEFAULT_CONFIG_PATH

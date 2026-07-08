@@ -171,9 +171,7 @@ def train(cfg: DictConfig) -> None:
     logger = logging.getLogger(__name__)
     assert torch.cuda.is_available(), "Training currently requires at least one GPU."
     device = accelerator.device
-    # new added
     torch.set_float32_matmul_precision('medium')
-    torch.autograd.set_detect_anomaly(True)
     current_datetime = datetime.now()
     current_date_tag = current_datetime.strftime("%Y%m%d")
     run_tag = current_datetime.strftime("%Y%m%d_%H%M%S")
